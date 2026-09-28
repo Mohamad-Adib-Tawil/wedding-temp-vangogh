@@ -1,0 +1,341 @@
+/* ============================================================
+   قالب vangogh «ليلة النجوم» — أنماط اللوحة
+   ليل أزرق دوّامي · ذهب النجوم · قماش كريمي معتّق · دوّار الشمس
+   ============================================================ */
+
+:root {
+  --night-1: #0b1533;
+  --night-2: #16295e;
+  --night-3: #1f3a7a;
+  --night-4: #2b5199;
+  --star-1: #f2e6b8;
+  --star-2: #e8d18a;
+  --gold: #c9a44a;
+  --gold-deep: #9a7830;
+  --canvas: #f6efdc;
+  --canvas-2: #efe5cc;
+  --ink: #26304e;
+  --ink-soft: #4a5578;
+  --sun: #e8b830;
+  --font-display: "Aref Ruqaa", serif;
+  --font-verse: "Amiri", serif;
+  --font-body: "El Messiri", "Tajawal", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--night-1);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+body.locked { overflow: hidden; height: 100dvh; }
+
+/* ============ شاشة الدخول ============ */
+#preloader {
+  position: fixed; inset: 0; z-index: 60;
+  background: var(--night-1);
+  transition: opacity .9s ease;
+}
+#preloader.fade-out { opacity: 0; pointer-events: none; }
+#preloader.hidden { display: none; }
+
+#preloaderVideo {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
+
+#preloaderPoster {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 18px calc(52px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(11, 21, 51, .78), rgba(11, 21, 51, .12) 45%, transparent 70%);
+  border: 0; width: 100%; cursor: pointer;
+  font-family: inherit; color: inherit;
+  transition: opacity .5s ease;
+}
+#preloaderPoster.hidden { opacity: 0; pointer-events: none; }
+
+.preloader-cta {
+  display: grid; gap: 9px; justify-items: center;
+  width: min(430px, 92vw);
+  background: rgba(11, 21, 51, .48);
+  border: 1px solid rgba(242, 230, 184, .35);
+  border-radius: 22px;
+  padding: 20px 26px 17px;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .35);
+}
+.preloader-cta__label {
+  font-family: var(--font-verse);
+  color: var(--star-2); font-size: 17px; letter-spacing: 1px;
+}
+.preloader-text {
+  font-family: var(--font-display);
+  color: #fdf7e3; font-size: clamp(24px, 6.4vw, 32px); line-height: 1.5;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .45);
+}
+.preloader-cta__hint { color: var(--star-1); font-size: 15px; opacity: .95; }
+
+.preloader-progress {
+  width: 100%; height: 7px; border-radius: 99px; overflow: hidden;
+  background: rgba(242, 230, 184, .18); margin-top: 5px;
+}
+.preloader-progress__bar {
+  display: block; height: 100%; width: var(--progress, 0%);
+  background: linear-gradient(90deg, var(--gold), var(--star-1));
+  border-radius: 99px; transition: none;   /* JS يُنعّم الصعود بنفسه — أي انتقال هنا يُخلّف الشريط عن الرقم */
+}
+.preloader-progress__meta { color: var(--star-1); font-size: 13px; font-weight: 700; }
+
+#preloaderPoster.is-ready .preloader-text { animation: vgPulse 2.2s ease-in-out infinite; }
+@keyframes vgPulse { 50% { opacity: .72; } }
+
+/* زر صوت المقدمة (عزف الكمان) */
+#introSound {
+  position: absolute; top: calc(16px + env(safe-area-inset-top)); inset-inline-start: 16px; z-index: 4;
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(242, 230, 184, .4);
+  background: rgba(11, 21, 51, .55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  font-size: 20px; cursor: pointer; display: grid; place-items: center; line-height: 1;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .3);
+}
+#introSound[hidden] { display: none; }
+
+/* التعتيم الليلي عند الانتقال */
+#preloaderNight {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 30%, #16295e, var(--night-1) 75%);
+  opacity: 0; transition: opacity .55s ease;
+}
+#preloader.nightfall #preloaderNight { opacity: 1; }
+
+/* ============ الموقع ============ */
+#site { opacity: 0; transition: opacity .8s ease; background: var(--canvas); }
+#site.visible { opacity: 1; }
+
+/* ===== الهيرو: اللوحة الحيّة ===== */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; background: var(--night-1);
+}
+.hero__sky { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero__stars { position: absolute; inset: 0; pointer-events: none; }
+.star-glow {
+  position: absolute; transform: translate(-50%, -50%); border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 248, 214, .55), rgba(242, 222, 150, .18) 55%, transparent 72%);
+  animation: vgTwinkle 3.6s ease-in-out infinite;
+}
+.star-glow--moon { background: radial-gradient(circle, rgba(240, 216, 120, .5), rgba(240, 216, 120, .14) 60%, transparent 75%); }
+@keyframes vgTwinkle { 50% { opacity: .35; transform: translate(-50%, -50%) scale(1.18); } }
+
+.hero__fade {
+  position: absolute; inset: auto 0 0 0; height: 22vh; pointer-events: none;
+  background: linear-gradient(to bottom, transparent, rgba(11, 21, 51, .35) 55%, var(--night-1));
+}
+
+.hero__content {
+  position: relative; z-index: 2; text-align: center;
+  padding: 40px 22px 90px; max-width: 620px;
+}
+.hero__eyebrow { font-family: var(--font-verse); color: var(--star-1); font-size: clamp(17px, 4.6vw, 21px); opacity: .95; }
+.ornament { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 14px 0; color: var(--star-2); }
+.ornament span { display: block; width: clamp(50px, 16vw, 90px); height: 1px; background: linear-gradient(90deg, transparent, var(--star-2), transparent); }
+
+.hero__name {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(40px, 11.5vw, 64px); line-height: 1.55; color: #fdf7e3;
+  text-shadow: 0 3px 22px rgba(0, 0, 0, .5), 0 0 44px rgba(242, 222, 150, .25);
+}
+.hero__amp { font-family: var(--font-display); font-size: clamp(24px, 6vw, 34px); color: var(--gold); margin: 2px 0; text-shadow: 0 0 22px rgba(201, 164, 74, .6); }
+.hero__invite { color: #e9e2c8; font-size: clamp(15px, 4.2vw, 18px); margin-top: 14px; line-height: 2; }
+.hero__date { font-family: var(--font-verse); color: var(--star-1); font-size: clamp(16px, 4.6vw, 20px); }
+.hero__caption { color: rgba(233, 226, 200, .8); font-size: 14px; margin-top: 8px; letter-spacing: .5px; }
+
+.hero__scroll {
+  position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); right: 50%; transform: translateX(50%);
+  display: grid; justify-items: center; gap: 4px;
+  color: rgba(240, 233, 208, .95); text-decoration: none; font-size: .88rem;
+  font-family: var(--font-body); letter-spacing: .3px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .45);
+}
+.hero__scroll span { animation: vgScrollGlow 1.8s ease-in-out infinite; }
+.hero__scroll svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; filter: drop-shadow(0 1px 8px rgba(0, 0, 0, .45)); animation: vgBounce 1.8s ease-in-out infinite; }
+@keyframes vgBounce { 50% { transform: translateY(7px); } }
+@keyframes vgScrollGlow { 0%, 100% { opacity: 1; } 50% { opacity: .85; } }
+
+/* ظهور نصوص الهيرو */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.is-in { opacity: 1; transform: none; }
+.reveal-mask { clip-path: inset(0 0 100% 0); transition: clip-path .9s cubic-bezier(.2, .7, .2, 1); }
+.reveal-mask.is-in { clip-path: inset(0 0 -8% 0); }
+
+/* ===== شريط دوّار الشمس ===== */
+.sunrow { background: linear-gradient(to bottom, var(--night-1), #223a63 30%, var(--canvas) 78%); }
+.sunrow__canvas { display: block; width: 100%; height: 96px; }
+
+/* ===== البطاقة ===== */
+.card {
+  max-width: 700px; margin: 0 auto; padding: 10px 20px 34px;
+  background: var(--canvas); position: relative;
+}
+.section { padding: 34px 6px; text-align: center; position: relative; }
+
+.section__title {
+  font-family: var(--font-display); font-weight: 700;
+  color: var(--night-3); font-size: clamp(24px, 6.4vw, 30px);
+  margin-bottom: 18px; position: relative; display: inline-block; line-height: 1.7;
+}
+.section__title::after {
+  content: ""; position: absolute; right: 8%; left: 8%; bottom: -2px; height: 5px;
+  background: linear-gradient(90deg, transparent, var(--gold) 22%, var(--sun) 50%, var(--gold) 78%, transparent);
+  border-radius: 99px; opacity: .75;
+}
+
+.flourish { display: block; color: var(--gold); font-size: 22px; margin-bottom: 10px; }
+.flourish--light { color: var(--star-1); }
+
+.divider { display: flex; align-items: center; gap: 12px; justify-content: center; font-size: 17px; }
+.divider span { display: block; width: clamp(60px, 20vw, 130px); height: 1px; background: linear-gradient(90deg, transparent, var(--gold-deep), transparent); }
+
+/* الدعاء */
+.verse__text {
+  font-family: var(--font-verse); font-size: clamp(18px, 5vw, 23px);
+  color: var(--night-2); line-height: 2.2; max-width: 34ch; margin: 0 auto;
+}
+
+/* بطاقة الدعوة */
+.invitation__text { color: var(--ink-soft); font-size: clamp(15px, 4.2vw, 17px); line-height: 2.2; max-width: 44ch; margin: 0 auto; }
+
+/* العائلتان */
+.families { display: flex; align-items: stretch; justify-content: center; gap: 12px; }
+.family { flex: 1; max-width: 250px; background: var(--canvas-2); border: 1px solid rgba(201, 164, 74, .45); border-radius: 16px; padding: 16px 12px; }
+.family__label { display: block; font-size: 13px; font-weight: 700; color: var(--gold-deep); margin-bottom: 8px; letter-spacing: .3px; }
+.family__names { font-family: var(--font-verse); color: var(--night-2); font-size: clamp(14px, 3.8vw, 16px); line-height: 2; }
+.families__heart { align-self: center; color: var(--gold); font-size: 18px; }
+
+/* العدّاد — بلاطات ليلية */
+.countdown { display: grid; grid-template-columns: repeat(4, minmax(64px, 96px)); gap: 10px; justify-content: center; direction: ltr; }
+.cd__cell {
+  position: relative; border-radius: 16px; overflow: hidden;
+  padding: 14px 4px 10px; display: grid; gap: 2px; justify-items: center;
+  border: 1px solid rgba(201, 164, 74, .5);
+  box-shadow: 0 8px 20px rgba(22, 41, 94, .25);
+}
+.cd__sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cd__num, .cd__lbl { position: relative; z-index: 1; }
+.cd__num { font-family: var(--font-display); font-size: clamp(24px, 7vw, 32px); color: var(--star-1); line-height: 1.3; text-shadow: 0 2px 10px rgba(0, 0, 0, .5); }
+.cd__lbl { font-size: 12px; color: #d6dcec; padding-bottom: 4px; }
+.when__arrived { font-family: var(--font-display); color: var(--night-3); font-size: 24px; }
+
+/* برنامج الحفل — خط زمني بنقاط شمسية */
+.timeline { list-style: none; max-width: 380px; margin: 0 auto; text-align: right; position: relative; padding-right: 26px; }
+.timeline::before { content: ""; position: absolute; right: 7px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(var(--gold), var(--night-4)); border-radius: 2px; opacity: .55; }
+.timeline__item { position: relative; padding: 9px 0 9px; display: flex; gap: 12px; align-items: baseline; }
+.timeline__dot {
+  position: absolute; right: -26px; top: 14px; width: 16px; height: 16px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #5a3a1a 0 32%, var(--sun) 34% 72%, #d99a26 74%);
+  box-shadow: 0 0 0 3px var(--canvas), 0 0 10px rgba(232, 184, 48, .6);
+}
+.timeline__time { font-weight: 700; color: var(--gold-deep); font-size: 14px; white-space: nowrap; }
+.timeline__title { color: var(--ink); font-size: 15px; }
+
+/* الموقع */
+.venue__photo {
+  width: min(430px, 92%); aspect-ratio: 16/9; margin: 4px auto 16px;
+  border-radius: 18px; border: 1px solid rgba(201, 164, 74, .5);
+  background:
+    radial-gradient(circle at 78% 18%, rgba(240, 216, 120, .5), transparent 26%),
+    radial-gradient(circle at 22% 30%, rgba(242, 230, 184, .3), transparent 20%),
+    linear-gradient(to bottom, var(--night-2), var(--night-3) 70%, #223a63);
+  background-size: cover; background-position: center;
+  display: grid; place-items: center;
+}
+.venue.has-photo .venue__photo .venue__pin { display: none; }
+.venue__pin { color: var(--star-1); font-size: 34px; text-shadow: 0 0 18px rgba(242, 222, 150, .8); }
+.when__date { font-family: var(--font-verse); color: var(--night-2); font-size: clamp(16px, 4.4vw, 19px); }
+.when__time { color: var(--ink-soft); font-size: 15px; margin: 3px 0 10px; }
+.venue__name { font-family: var(--font-display); color: var(--night-3); font-size: clamp(19px, 5vw, 23px); line-height: 1.8; }
+.venue__addr { color: var(--ink-soft); font-size: 14px; margin-bottom: 14px; }
+.venue__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--night-3); color: var(--star-1); text-decoration: none;
+  font-weight: 700; font-size: 15px; padding: 10px 26px; border-radius: 99px;
+  border: 1px solid rgba(242, 230, 184, .35);
+  box-shadow: 0 10px 22px rgba(22, 41, 94, .35);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.venue__btn:hover { transform: translateY(-2px); box-shadow: 0 14px 26px rgba(22, 41, 94, .42); }
+
+/* الملاحظات */
+.notes__list { list-style: none; max-width: 420px; margin: 0 auto; display: grid; gap: 10px; text-align: right; }
+.notes__item { display: flex; gap: 10px; align-items: baseline; color: var(--ink-soft); font-size: 15px; line-height: 1.9; }
+.notes__mark { color: var(--gold); flex-shrink: 0; }
+
+/* الخاتمة — لوحة ليلية مصغّرة */
+.closing { border-radius: 24px; overflow: hidden; padding: 0; margin-top: 10px; }
+.closing__sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+.closing__inner { position: relative; z-index: 1; padding: 44px 20px 38px; display: grid; gap: 8px; justify-items: center; }
+.closing__note { font-family: var(--font-display); color: #fdf7e3; font-size: clamp(22px, 6vw, 28px); line-height: 1.9; text-shadow: 0 2px 16px rgba(0, 0, 0, .5); }
+.closing__hashtag { color: var(--star-2); font-weight: 700; font-size: 15px; }
+.contact { display: grid; gap: 4px; justify-items: center; margin: 12px 0 4px; }
+.contact__label { color: rgba(233, 226, 200, .85); font-size: 13px; }
+.contact__link { color: var(--star-1); font-weight: 700; text-decoration: none; font-size: 16px; border-bottom: 1px dashed rgba(242, 230, 184, .5); padding-bottom: 2px; }
+.closing__families { font-family: var(--font-verse); color: #e9e2c8; font-size: clamp(14px, 4vw, 17px); margin-top: 8px; }
+
+/* ظهور الأقسام */
+.creveal { opacity: 0; transform: translateY(22px); transition: opacity .8s ease, transform .8s ease; }
+.creveal.is-visible { opacity: 1; transform: none; }
+
+/* ===== الأقسام المحقونة (احفظ الموعد + تأكيد الحضور) — لمسات «ليلة النجوم» ===== */
+/* رذاذ نجوم وتوهّجان (ذهبي وأزرق) داخل البطاقة الليلية — !important لتجاوز خلفية الثيم المحقونة */
+#da3wa-cal .cal,
+#da3wa-rsvp .rsvp-card {
+  background-image:
+    radial-gradient(circle at 84% 14%, rgba(232, 192, 96, .20), transparent 30%),
+    radial-gradient(circle at 12% 78%, rgba(91, 142, 203, .22), transparent 34%),
+    radial-gradient(1.5px 1.5px at 22% 24%, rgba(242, 230, 184, .85), transparent 60%),
+    radial-gradient(1.5px 1.5px at 68% 58%, rgba(242, 230, 184, .6), transparent 60%),
+    radial-gradient(2px 2px at 38% 84%, rgba(232, 192, 96, .7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 88% 42%, rgba(242, 230, 184, .55), transparent 60%) !important;
+  box-shadow: 0 22px 48px rgba(6, 12, 32, .5), inset 0 0 0 1px rgba(232, 200, 132, .22) !important;
+}
+/* رقم اليوم يتوهج كنجمة اللوحة */
+#da3wa-cal .cal-day { text-shadow: 0 0 20px rgba(232, 192, 96, .6), 0 2px 8px rgba(0, 0, 0, .4); }
+
+/* حركة أقل */
+@media (prefers-reduced-motion: reduce) {
+  .star-glow, .hero__scroll svg, .hero__scroll span, #preloaderPoster.is-ready .preloader-text { animation: none; }
+  .reveal, .reveal-mask, .creveal { transition: none; opacity: 1; transform: none; clip-path: none; }
+}
+
+/* شاشات أوسع */
+@media (min-width: 760px) {
+  .card { border-inline: 1px solid rgba(201, 164, 74, .3); padding-inline: 40px; }
+  .sunrow__canvas { height: 120px; }
+}
+
+/* أسطر Enter في حقل «الدعاء/العبارة» تُعرض كما كتبها الزبون (بسملة فوق والآية تحتها) */
+.verse__text { white-space: pre-line; }
+
+/* Local invitation actions */
+#da3wa-music {
+  position: fixed; inset-inline-start: 16px; bottom: 76px; z-index: 61;
+  width: 48px; height: 48px; display: grid; place-items: center;
+  border: 1px solid rgba(201,164,74,.45); border-radius: 50%;
+  background: rgba(13,23,54,.9); color: #f2e6b8; box-shadow: 0 8px 22px rgba(0,0,0,.28);
+  cursor: pointer; font-size: 21px; user-select: none;
+}
+#da3wa-democta {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 80; display: flex; align-items: center;
+  gap: 9px; padding: 9px 12px calc(9px + env(safe-area-inset-bottom, 0px));
+  background: rgba(13,23,54,.94); border-top: 1px solid rgba(201,164,74,.35);
+  color: #f2e6b8; font-family: var(--font-body); box-shadow: 0 -8px 24px rgba(0,0,0,.18);
+}
+#da3wa-democta p { flex: 1; margin: 0; font-size: 14px; }
+#da3wa-democta a { text-decoration: none; color: #101b3e; font-weight: 700; white-space: nowrap; }
+#da3wa-democta .dc-order { border-radius: 999px; padding: 10px 16px; background: #e8c060; }
+#da3wa-democta .dc-wa { border-radius: 999px; padding: 10px 12px; background: #f2e6b8; }
+@media (max-width: 380px) { #da3wa-democta p { font-size: 12px; } #da3wa-democta .dc-order, #da3wa-democta .dc-wa { padding-inline: 10px; } }

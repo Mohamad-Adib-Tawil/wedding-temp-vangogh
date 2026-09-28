@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1533">
+  <meta name="description" content="دعوة زفاف محمد أديب طويل ورزان بطايحي">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/share.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="assets/share.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:ital@0;1&family=El+Messiri:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/preloader-poster.jpg" fetchpriority="high">
+  <link rel="stylesheet" href="styles.css">
+  <script src="invite-config.js"></script>
+  <script src="site.js" defer></script>
+  <script src="script.js" defer></script>
+  <title>دعوة زفاف محمد أديب طويل &amp; رزان بطايحي</title>
+</head>
+<body class="locked">
+
+  <!-- ============ شاشة الدخول: فيديو فان كوخ + شريط تحميل ============ -->
+  <div id="preloader" aria-label="شاشة فتح الدعوة">
+    <video id="preloaderVideo" src="assets/preloader.mp4" poster="assets/preloader-poster.jpg" muted="" playsinline="" webkit-playsinline="" preload="auto"></video>
+    <!-- عزف الكمان — ملف مستقل عن الفيديو (يبدأ بلمسة الفتح، فيتعايش مع تهيئة موسيقى القالب على iOS) -->
+    <audio id="introAudio" src="assets/violin.m4a" preload="auto"></audio>
+    <button id="preloaderPoster" type="button" aria-label="فتح الدعوة">
+      <span class="preloader-cta">
+        <span class="preloader-cta__label">دعوة زفاف</span>
+        <span class="preloader-text">اضغط لبدء الحكاية</span>
+        <span class="preloader-cta__hint" id="preloaderNames">العريس والعروس</span>
+        <span class="preloader-progress" id="preloaderProgress" role="progressbar" aria-label="تحميل فيديو الدعوة" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span class="preloader-progress__bar" id="preloaderProgressBar"></span>
+        </span>
+        <span class="preloader-progress__meta" id="preloaderPercent">0%</span>
+      </span>
+    </button>
+    <!-- زر صوت الفيديو (عزف الكمان) — يظهر بعد بدء المقدمة -->
+    <button id="introSound" type="button" aria-label="صوت المقدمة" hidden="">🔊</button>
+    <div id="preloaderNight" aria-hidden="true"></div>
+  </div>
+
+  <!-- ============ محتوى الدعوة ============ -->
+  <main id="site">
+
+    <!-- ===== الهيرو: سماء «ليلة النجوم» مرسومة بالكانفاس حيّاً ===== -->
+    <section class="hero" id="hero">
+      <canvas class="hero__sky" id="skyCanvas" aria-hidden="true"></canvas>
+      <div class="hero__stars" id="starGlows" aria-hidden="true"></div>
+      <div class="hero__fade" aria-hidden="true"></div>
+
+      <div class="hero__content">
+        <p class="hero__eyebrow reveal" data-delay="150">بسم الله الرحمن الرحيم</p>
+        <div class="ornament reveal" data-delay="260" aria-hidden="true"><span></span><b>✶</b><span></span></div>
+
+        <div class="mask-reveal reveal-mask" data-delay="430">
+          <h1 class="hero__name" id="heroGroom">العريس</h1>
+        </div>
+        <div class="hero__amp reveal" data-delay="730">&amp;</div>
+        <div class="mask-reveal reveal-mask" data-delay="890">
+          <h1 class="hero__name" id="heroBride">العروس</h1>
+        </div>
+
+        <p class="hero__invite reveal" data-delay="1180" id="heroInvite">يتشرّفان بدعوتكم لمشاركتهما فرحة العمر</p>
+
+        <div class="ornament reveal" data-delay="1500" aria-hidden="true"><span></span><b>❋</b><span></span></div>
+        <p class="hero__date reveal" data-delay="1660" id="heroDate">—</p>
+        <p class="hero__caption reveal" data-delay="1830">حكاية رسمتها النجوم</p>
+
+        <a class="hero__scroll reveal" data-delay="2300" href="#countdown" aria-label="مرّر للأسفل">
+          <span>مرّر للأسفل</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- شريط دوّار الشمس المرسوم — فاصل الهيرو والبطاقة -->
+    <div class="sunrow" aria-hidden="true"><canvas class="sunrow__canvas" data-sunrow=""></canvas></div>
+
+    <!-- ===== البطاقة والأقسام ===== -->
+    <article class="card">
+
+      <!-- دعاء افتتاحي -->
+      <section class="section verse creveal">
+        <span class="flourish" aria-hidden="true">✶</span>
+        <p class="verse__text" id="verseText">—</p>
+      </section>
+
+      <div class="divider creveal" aria-hidden="true"><span></span>🌻<span></span></div>
+
+      <!-- نص الدعوة الرسمي -->
+      <section class="section invitation creveal">
+        <h2 class="section__title">بطاقة دعوة</h2>
+        <p class="invitation__text" id="invitationText">—</p>
+      </section>
+
+      <!-- عائلتا العروسين -->
+      <section class="section families creveal">
+        <div class="family">
+          <span class="family__label">والدا العريس</span>
+          <p class="family__names" id="groomParents">—</p>
+        </div>
+        <span class="families__heart" aria-hidden="true">✶</span>
+        <div class="family">
+          <span class="family__label">والدا العروس</span>
+          <p class="family__names" id="brideParents">—</p>
+        </div>
+      </section>
+
+      <div class="divider creveal" aria-hidden="true"><span></span>🌻<span></span></div>
+
+      <!-- العدّاد — بلاطات ليلية صغيرة -->
+      <section class="section when creveal">
+        <h2 class="section__title">يبدأ الاحتفال بعد</h2>
+        <div class="countdown" id="countdown" role="timer" aria-label="الوقت المتبقّي">
+          <div class="cd__cell"><canvas class="cd__sky" data-minisky="" aria-hidden="true"></canvas><span class="cd__num" id="cdDays">00</span><span class="cd__lbl">يوم</span></div>
+          <div class="cd__cell"><canvas class="cd__sky" data-minisky="" aria-hidden="true"></canvas><span class="cd__num" id="cdHours">00</span><span class="cd__lbl">ساعة</span></div>
+          <div class="cd__cell"><canvas class="cd__sky" data-minisky="" aria-hidden="true"></canvas><span class="cd__num" id="cdMins">00</span><span class="cd__lbl">دقيقة</span></div>
+          <div class="cd__cell"><canvas class="cd__sky" data-minisky="" aria-hidden="true"></canvas><span class="cd__num" id="cdSecs">00</span><span class="cd__lbl">ثانية</span></div>
+        </div>
+        <p class="when__arrived" id="cdArrived" hidden="">وصل اليوم 🎉</p>
+      </section>
+
+      <div class="divider creveal" aria-hidden="true"><span></span>🌻<span></span></div>
+
+      <!-- برنامج الحفل -->
+      <section class="section program creveal">
+        <h2 class="section__title">برنامج الحفل</h2>
+        <ul class="timeline" id="timeline"></ul>
+      </section>
+
+      <div class="divider creveal" aria-hidden="true"><span></span>🌻<span></span></div>
+
+      <!-- القاعة -->
+      <section class="section venue creveal">
+        <h2 class="section__title">الموقع</h2>
+        <div class="venue__photo" id="venuePhoto" aria-hidden="true">
+          <span class="venue__pin">⌖</span>
+        </div>
+        <p class="when__date" id="weddingDate">—</p>
+        <p class="when__time" id="weddingTime">—</p>
+        <p class="venue__name" id="venueName">—</p>
+        <p class="venue__addr" id="venueAddr">—</p>
+        <a class="venue__btn" id="mapBtn" href="#" target="_blank" rel="noopener">
+          <span aria-hidden="true">⌖</span> الخريطة
+        </a>
+      </section>
+
+      <div class="divider creveal" aria-hidden="true"><span></span>🌻<span></span></div>
+
+      <!-- ملاحظات مهمة -->
+      <section class="section notes creveal">
+        <h2 class="section__title">ملاحظات</h2>
+        <ul class="notes__list" id="notesList"></ul>
+      </section>
+
+      <div class="divider creveal" aria-hidden="true"><span></span>🌻<span></span></div>
+
+      <!-- الخاتمة: سماء ليلية مصغّرة تحتضن الختام -->
+      <footer class="section closing creveal">
+        <canvas class="closing__sky" id="closingSky" aria-hidden="true"></canvas>
+        <div class="closing__inner">
+          <p class="closing__note" id="closingNote">—</p>
+          <p class="closing__hashtag" id="closingHashtag">—</p>
+          <div class="contact" id="contactBox">
+            <span class="contact__label">للاستفسار والتأكيد</span>
+            <a class="contact__link" id="contactLink" href="#">—</a>
+          </div>
+          <p class="closing__families" id="closingFamilies">—</p>
+          <span class="flourish flourish--light" aria-hidden="true">✶</span>
+        </div>
+      </footer>
+    </article>
+  
+
+
+<section id="da3wa-cal" dir="rtl">
+  <style>
+    #da3wa-cal{position:relative;z-index:5;padding:6px 18px 44px;font-family:"Tajawal",system-ui,sans-serif}
+    #da3wa-cal .cal-title{text-align:center;font-family:"Aref Ruqaa",serif;font-size:23px;color:#e8c060;margin:0 0 16px;letter-spacing:normal;font-weight:700;text-shadow:0 1px 14px rgba(0,0,0,.5)}
+    #da3wa-cal .cal{max-width:258px;margin:0 auto;background:rgba(13,23,54,.78);border:1px solid rgba(232,200,132,.48);border-radius:20px;overflow:hidden;box-shadow:0 20px 46px rgba(0,0,0,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+    #da3wa-cal .cal-top{background:linear-gradient(135deg, #e8c060, #5b8ecb);color:#101b3e;text-align:center;padding:13px 10px 11px;font-weight:800;font-size:16px;position:relative}
+    #da3wa-cal .cal-top::before,#da3wa-cal .cal-top::after{content:"";position:absolute;top:-6px;width:8px;height:15px;border-radius:4px;background:rgba(255,255,255,.4);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+    #da3wa-cal .cal-top::before{right:33%}
+    #da3wa-cal .cal-top::after{left:33%}
+    #da3wa-cal .cal-body{padding:14px 10px 18px;text-align:center}
+    #da3wa-cal .cal-wd{color:rgba(242,236,216,.72);font-weight:700;font-size:15px;margin-bottom:2px}
+    #da3wa-cal .cal-day{font-family:"Aref Ruqaa",serif;font-size:62px;line-height:1.15;color:#e8c060;letter-spacing:normal;font-weight:700}
+    #da3wa-cal .cal-time{color:#f2ecd8;font-weight:700;font-size:14px;margin-top:8px}
+    #da3wa-cal .cal-foot{border-top:1px dashed rgba(232,200,132,.48);padding:12px 12px 15px;text-align:center}
+    #da3wa-cal .cal-cap{color:rgba(242,236,216,.72);font-size:12px;font-weight:700;margin:0 0 9px}
+    #da3wa-cal .cal-btns{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+    #da3wa-cal .cal-btns a{display:inline-flex;align-items:center;border:1.5px solid #e8c060;color:#f2ecd8;background:rgba(255,255,255,.07);text-decoration:none;font-weight:700;font-size:12.5px;border-radius:999px;padding:7px 13px;transition:.15s}
+    #da3wa-cal .cal-btns a:active{transform:scale(.97)}
+  </style>
+  <p class="cal-title">احفظ الموعد 🌻</p>
+  <div class="cal">
+    <div class="cal-top">كانون الأول 2026</div>
+    <div class="cal-body">
+      <div class="cal-wd">الجمعة</div>
+      <div class="cal-day">11</div>
+      <div class="cal-time">الساعة السابعة مساءً</div>
+    </div>
+      <div class="cal-foot">
+        <p class="cal-cap">📲 أضِف الموعد إلى تقويم هاتفك بضغطة</p>
+        <div class="cal-btns">
+          <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=%D8%AF%D8%B9%D9%88%D8%A9%20%D8%B2%D9%81%D8%A7%D9%81%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%A3%D8%AF%D9%8A%D8%A8%20%D8%B7%D9%88%D9%8A%D9%84%20%26%20%D8%B1%D8%B2%D8%A7%D9%86%20%D8%A8%D8%B7%D8%A7%D9%8A%D8%AD%D9%8A&amp;dates=20261211T190000/20261211T230000&amp;ctz=Asia/Baghdad&amp;location=%D9%82%D8%A7%D8%B9%D8%A9%20%D8%A7%D9%84%D9%86%D8%AC%D9%88%D9%85%20%D8%A7%D9%84%D9%83%D8%A8%D8%B1%D9%89%20%E2%80%94%20%D8%A8%D8%BA%D8%AF%D8%A7%D8%AF%20%E2%80%94%20%D8%A7%D9%84%D9%85%D9%86%D8%B5%D9%88%D8%B1&amp;details=%D8%B1%D8%A7%D8%A8%D8%B7%20%D8%A7%D9%84%D8%AF%D8%B9%D9%88%D8%A9%3A%20https%3A%2F%2Fhalaheel.com%2Fd%2Fdemo-vangogh" target="_blank" rel="noopener">تقويم جوجل</a>
+          <a href="/cal/demo-vangogh">تقويم آيفون</a>
+        </div>
+      </div>
+  </div>
+</section>
+<section id="da3wa-rsvp" data-inv="d2eaf6fb-64ec-4334-88fc-5170e601a199" data-cap="3" dir="rtl">
+  <style>
+    #da3wa-rsvp{position:relative;z-index:5;padding:48px 18px 64px;font-family:"Tajawal",system-ui,sans-serif}
+    #da3wa-rsvp .rsvp-card{max-width:440px;margin:0 auto;background:rgba(13,23,54,.78);border:1px solid rgba(232,200,132,.48);border-radius:20px;padding:26px 22px;box-shadow:0 24px 60px rgba(0,0,0,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);text-align:center}
+    #da3wa-rsvp h3{font-family:"Aref Ruqaa",serif;font-size:26px;color:#f2ecd8;margin:0 0 4px;letter-spacing:normal;font-weight:700}
+    #da3wa-rsvp .orn-line{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 6px}
+    #da3wa-rsvp .orn-line i{flex:0 1 54px;height:1.5px;background:linear-gradient(90deg,transparent,#e8c060);border:none}
+    #da3wa-rsvp .orn-line i:last-child{transform:scaleX(-1)}
+    #da3wa-rsvp .orn-line b{font-size:17px;line-height:1;font-weight:400}
+    #da3wa-rsvp p.sub{color:rgba(242,236,216,.72);font-size:14px;margin:0 0 18px}
+    /* شارة الحد الأقصى للحضور */
+    #da3wa-rsvp .cap-note{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px dashed #e8c060;color:#f2ecd8;border-radius:999px;padding:7px 16px;font-size:13px;font-weight:700;margin:0 0 16px;line-height:1.7}
+    /* تنبيه خاص بدعوة Bassam & Neyra — أسفل حد الحضور مباشرةً */
+    #da3wa-rsvp .names-notice{display:block;margin:-4px 0 12px;padding:8px 11px;border-radius:7px;background:#dc1745;color:#fff;font-size:13px;font-weight:800;line-height:1.35;text-align:center;box-shadow:0 7px 16px rgba(220,23,69,.22)}
+    /* تنبيه بلوغ الحد — يظهر بنبضة لطيفة ويختفي */
+    #da3wa-rsvp .cap-max{display:block;color:#ffe9a8;font-size:13px;font-weight:800;margin-top:8px;opacity:0;transform:translateY(-4px);transition:opacity .3s ease,transform .3s ease}
+    #da3wa-rsvp .cap-max.on{opacity:1;transform:none;animation:dwPop .45s ease}
+    #da3wa-rsvp .step.at-cap #da3wa-plus{opacity:.4;cursor:not-allowed}
+    #da3wa-rsvp .step.shake{animation:dwShake .4s ease}
+    @keyframes dwPop{0%{transform:scale(.85)}55%{transform:scale(1.06)}100%{transform:scale(1)}}
+    @keyframes dwShake{0%,100%{transform:translateX(0)}25%{transform:translateX(4px)}50%{transform:translateX(-4px)}75%{transform:translateX(3px)}}
+    /* start لا right: القسم يحمل dir حسب اللغة، فالإنكليزية كانت تصفّ التسميات يميناً */
+    #da3wa-rsvp label{display:block;text-align:start;font-weight:700;font-size:13px;color:#f2ecd8;margin:12px 0 5px}
+    #da3wa-rsvp input,#da3wa-rsvp textarea{width:100%;padding:11px 14px;border:1.5px solid rgba(232,200,132,.48);border-radius:12px;font-family:inherit;font-size:15px;background:rgba(255,255,255,.08);color:#f2ecd8;box-sizing:border-box}
+    #da3wa-rsvp input::placeholder,#da3wa-rsvp textarea::placeholder{color:rgba(242,236,216,.72);opacity:.85}
+    #da3wa-rsvp .pills{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+    /* font-family:inherit — بلا هذا يرث الزر خط المتصفح (Arial) فتشذّ نعم/لا/ربما عن خط الدعوة */
+    #da3wa-rsvp .pill{padding:11px;border:1.5px solid rgba(232,200,132,.48);border-radius:12px;background:rgba(255,255,255,.08);font-family:inherit;font-weight:700;cursor:pointer;font-size:15px;color:#f2ecd8;transition:.15s}
+    #da3wa-rsvp .pill[aria-pressed="true"]{background:#e8c060;color:#101b3e;border-color:#e8c060}
+    #da3wa-rsvp .step{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:6px}
+    #da3wa-rsvp .step button{width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(232,200,132,.48);background:rgba(255,255,255,.08);font-size:20px;cursor:pointer;color:#f2ecd8}
+    #da3wa-rsvp .step span{font-size:20px;font-weight:800;min-width:28px;color:#f2ecd8;text-align:center}
+    #da3wa-rsvp .send{width:100%;margin-top:20px;padding:13px;border:none;border-radius:999px;background:#e8c060;color:#101b3e;font-weight:700;font-size:16px;font-family:inherit;cursor:pointer;box-shadow:0 12px 26px -10px rgba(0,0,0,.6)}
+    #da3wa-rsvp .send:disabled{opacity:.6}
+    #da3wa-rsvp .ok{padding:18px}
+    #da3wa-rsvp .ok .emoji{font-size:46px}
+    #da3wa-rsvp .ok h3{margin-top:8px}
+    /* قمع الضيوف — بارز لكنه لا يزاحم تأكيد الحضور نفسه */
+    #da3wa-rsvp .gcta{margin:18px auto 2px;max-width:340px;padding:14px 16px;border-radius:16px;
+      background:rgba(255,255,255,.92);border:1px solid rgba(20,14,30,.10);box-shadow:0 10px 26px -16px rgba(20,14,30,.45)}
+    #da3wa-rsvp .gcta-t{margin:0;font-weight:800;font-size:15px;color:#2a2140;letter-spacing:normal}
+    #da3wa-rsvp .gcta-s{margin:5px 0 11px;font-size:12.5px;line-height:1.7;color:#6e6780;letter-spacing:normal}
+    #da3wa-rsvp .gcta-b{display:inline-block;background:#ff4d7d;color:#fff;text-decoration:none;font-weight:800;
+      font-size:13.5px;padding:9px 22px;border-radius:999px;letter-spacing:normal;
+      box-shadow:0 8px 18px -8px rgba(255,77,125,.9);transition:opacity .16s,transform .16s}
+    #da3wa-rsvp .gcta-b:active{opacity:.75;transform:scale(.97)}
+    /* بطاقة الدخول (QR) — تظهر كاملة على شاشة النجاح للـVIP */
+    #da3wa-rsvp .ticket{margin-top:16px;padding:16px;border-radius:20px;border:1px solid rgba(232,200,132,.48);background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+    #da3wa-rsvp .ticket-title{font-family:"Aref Ruqaa",serif;font-size:15px;letter-spacing:.04em;color:rgba(242,236,216,.72);margin:0 0 10px}
+    #da3wa-rsvp .ticket-qr{width:min(72vw,250px);height:auto;display:block;margin:0 auto;border-radius:12px;background:#fff;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+    #da3wa-rsvp .ticket-hint{font-size:.8rem;opacity:.8;margin:10px auto 0;max-width:280px;line-height:1.7}
+    #da3wa-rsvp .ticket-save{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:.72rem 1.6rem;border:none;border-radius:999px;background:#e8c060;color:#101b3e;font-family:inherit;font-weight:800;font-size:14.5px;cursor:pointer;box-shadow:0 12px 26px -10px rgba(0,0,0,.6)}
+    #da3wa-rsvp .ticket-save:disabled{opacity:.7;cursor:default}
+    #da3wa-rsvp .ticket-open{display:block;margin-top:10px;font-size:.82rem;color:#e8c060;text-decoration:underline}
+    #da3wa-rsvp .err{color:#ff9db6;font-size:13px;margin-top:8px;min-height:18px}
+    /* حالة «مؤكَّد» للرابط الشخصي — يفتحها الضيف العائد بدل استمارة فارغة */
+    #da3wa-rsvp .done-mark{font-size:40px;line-height:1}
+    #da3wa-rsvp .done-t{margin:6px 0 2px;font-family:"Aref Ruqaa",serif;font-size:22px;color:#f2ecd8;letter-spacing:normal}
+    #da3wa-rsvp .done-n{margin:0;font-size:15px;font-weight:800;color:#e8c060}
+    #da3wa-rsvp .done-c{margin:8px 0 0;font-size:14px;color:rgba(242,236,216,.72)}
+    #da3wa-rsvp .done-hint{margin:12px auto 0;max-width:300px;font-size:12.5px;line-height:1.75;color:rgba(242,236,216,.72);opacity:.9}
+    #da3wa-rsvp .done-edit{margin-top:16px;padding:11px 26px;border:1.5px solid rgba(232,200,132,.48);border-radius:999px;background:rgba(255,255,255,.08);color:#f2ecd8;font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer}
+    #da3wa-rsvp .done-lock{margin:14px auto 0;max-width:300px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.07);border:1px dashed #e8c060;color:#f2ecd8;font-size:12.5px;font-weight:700;line-height:1.6}
+    /* الاسم المثبّت من الرابط: يُعرض ولا يُكتب */
+    #da3wa-rsvp input[readonly]{opacity:.85;cursor:default}
+    /* جدار التهاني */
+    #da3wa-rsvp .wishes{max-width:460px;margin:30px auto 0}
+    #da3wa-rsvp .wishes-h{text-align:center;margin-bottom:16px}
+    #da3wa-rsvp .wishes-h h3{font-size:21px;display:inline-block;background:rgba(13,23,54,.78);color:#f2ecd8;border:1px solid rgba(232,200,132,.48);border-radius:999px;padding:7px 22px;box-shadow:0 10px 26px rgba(0,0,0,.4);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);letter-spacing:normal}
+    #da3wa-rsvp .wish-list{display:grid;gap:10px}
+    #da3wa-rsvp .wish{display:flex;gap:11px;align-items:flex-start;background:rgba(13,23,54,.78);border:1px solid rgba(232,200,132,.48);border-radius:16px;padding:13px 15px;box-shadow:0 8px 24px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);animation:dwIn .5s ease both}
+    #da3wa-rsvp .wish-av{flex-shrink:0;width:40px;height:40px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-family:"Aref Ruqaa",serif;font-size:19px}
+    #da3wa-rsvp .wish-body{text-align:start;flex:1;min-width:0}
+    #da3wa-rsvp .wish-name{font-weight:700;color:#f2ecd8;font-size:14px}
+    #da3wa-rsvp .wish-msg{color:rgba(242,236,216,.72);font-size:14px;line-height:1.7;word-wrap:break-word}
+    #da3wa-rsvp .wishes-empty{text-align:center;color:rgba(242,236,216,.72);font-size:14px;padding:16px;background:rgba(13,23,54,.78);border:1px solid rgba(232,200,132,.48);border-radius:16px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+    #da3wa-rsvp .wish.wish-hid{display:none}
+    #da3wa-rsvp .wishes-more{display:block;margin:16px auto 0;padding:10px 26px;border:1px solid rgba(232,200,132,.48);border-radius:999px;background:rgba(13,23,54,.78);color:#f2ecd8;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.4);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+    @keyframes dwIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    /* ستوري الحضور — عرض البطاقة بعد التأكيد */
+    #da3wa-rsvp .story-offer{margin-top:20px;padding-top:18px;border-top:1px dashed rgba(232,200,132,.48);text-align:center}
+    #da3wa-rsvp .so-t{margin:0;font-family:"Aref Ruqaa",serif;font-size:20px;color:#f2ecd8;letter-spacing:normal}
+    #da3wa-rsvp .so-s{margin:4px 0 0;color:rgba(242,236,216,.72);font-size:13.5px}
+    #da3wa-rsvp .so-img{width:172px;border-radius:14px;border:1px solid rgba(232,200,132,.48);box-shadow:0 14px 30px rgba(0,0,0,.45);margin:14px auto 12px;display:block;min-height:120px;background:rgba(255,255,255,.08)}
+    #da3wa-rsvp .so-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:320px;margin:0 auto}
+    #da3wa-rsvp .so-btn{padding:11px;border:none;border-radius:999px;font-weight:700;font-size:14.5px;font-family:inherit;cursor:pointer}
+    #da3wa-rsvp .so-dl{background:#e8c060;color:#101b3e}
+    #da3wa-rsvp .so-sh{background:rgba(255,255,255,.08);color:#f2ecd8;border:1.5px solid rgba(232,200,132,.48)}
+    /* زر فتح الستوري — حين الباركود مفعّل يتصدّر هو والستوري خلف هذا الزر */
+    #da3wa-rsvp .so-open{margin-top:18px;padding:11px 24px;border:1.5px solid rgba(232,200,132,.48);border-radius:999px;background:rgba(255,255,255,.08);color:#f2ecd8;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer}
+    /* قلوب تطفو من جانبي الشاشة */
+    #da3wa-rsvp .heart{position:fixed;bottom:-24px;font-size:24px;color:#e8c060;pointer-events:none;z-index:55;opacity:0;will-change:transform,opacity;animation:dwHeart ease-in forwards;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+    @keyframes dwHeart{0%{opacity:0;transform:translateY(0) scale(.5) rotate(0)}12%{opacity:.95}100%{opacity:0;transform:translateY(-108vh) scale(1.15) rotate(var(--rot,8deg))}}
+  </style>
+  <div class="rsvp-card" id="da3wa-rsvp-card">
+    <div class="orn-line" aria-hidden="true"><i></i><b>🌻</b><i></i></div>
+    
+    <div id="da3wa-form-wrap">
+    <h3>تأكيد الحضور</h3>
+    <p class="sub">يسعدنا تأكيد حضوركم</p>
+    <span class="cap-note">👥 هذه الدعوة تتّسع لـ ٣ أشخاص كحدٍّ أقصى — شاملاً حضورك</span>
+    
+    <form id="da3wa-rsvp-form">
+      <label>الاسم الكريم</label>
+      <input name="guest_name" required="" maxlength="80" placeholder="اسمك">
+      <label>هل ستحضر؟</label>
+      <div class="pills" id="da3wa-att">
+        <button type="button" class="pill" data-v="yes" aria-pressed="true">نعم</button>
+        <button type="button" class="pill" data-v="no">لا</button>
+        <button type="button" class="pill" data-v="maybe">ربما</button>
+      </div>
+      <label>عدد المرافقين (عدا حضورك — ٠ إن كنت وحدك)</label>
+      <div class="step" id="da3wa-step"><button type="button" id="da3wa-minus">−</button><span id="da3wa-guests">0</span><button type="button" id="da3wa-plus">+</button></div>
+      <span class="cap-max" id="da3wa-capmax">وصلتم الحد الأقصى لهذه الدعوة ✨</span>
+      <label>كلمة للعروسين 💌</label><textarea name="message" rows="2" maxlength="300" placeholder="اكتب تهنئتك للعروسين..."></textarea>
+      <button class="send" type="submit">إرسال التأكيد</button>
+      <div class="err" id="da3wa-err"></div>
+    </form>
+    </div>
+  </div>
+
+  <div class="wishes" id="da3wa-wishes">
+    <div class="wishes-h"><h3>كلمات المهنّئين 🌻</h3></div>
+    <div class="wish-list" id="da3wa-wish-list"><div class="wish"><div class="wish-av" style="background:#e8c060">أ</div><div class="wish-body"><div class="wish-name">أم محمد</div><div class="wish-msg">ألف مبروك 🤍 بالرفاه والبنين إن شاء الله، فرحتكم فرحتنا</div></div></div><div class="wish"><div class="wish-av" style="background:#5b8ecb">س</div><div class="wish-body"><div class="wish-name">سارة</div><div class="wish-msg">عقبال ما نفرح بيكم بأحلى المناسبات، دعوة بغاية الذوق 😍</div></div></div><div class="wish"><div class="wish-av" style="background:#e8b830">ح</div><div class="wish-body"><div class="wish-name">حيدر</div><div class="wish-msg">مبارك الزواج، الله يجعل أيامكم كلها أفراح</div></div></div><div class="wish"><div class="wish-av" style="background:#31549e">ن</div><div class="wish-body"><div class="wish-name">نور الهدى</div><div class="wish-msg">بيت جديد عامر بالمحبة إن شاء الله، ألف مبروك</div></div></div><div class="wish"><div class="wish-av" style="background:#f2e6b8">أ</div><div class="wish-body"><div class="wish-name">أبو علي</div><div class="wish-msg">الله يبارك لكما ويبارك عليكما ويجمع بينكما في خير</div></div></div></div>
+    
+    
+  </div>
+</section>
+
+
+
+<div id="da3wa-music" aria-label="تشغيل الموسيقى" role="button" tabindex="0">🎵</div>
+<div id="da3wa-democta" dir="rtl">
+  <p>يسعدنا حضوركم ومشاركتكم فرحتنا</p>
+  <a class="dc-order" id="orderLink" href="https://wa.me/+963992688759" target="_blank" rel="noopener">اطلبه 🎉</a>
+  <a class="dc-wa" id="orderWhatsapp" href="https://wa.me/+963992688759" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">واتساب</a>
+</div>
+</main>
+</body>
+</html>
